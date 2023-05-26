@@ -1,40 +1,77 @@
 <template>
-    <div class="flex">
-        <div class=" w-full   border-r-2 flex justify-center items-center" style="height: 585px;">
-             <div class="w-11/12 h-full ">
-                   <div class=" h-1/2 flex justify-evenly items-center">
-                      <BarChart :chartData="testData" class="w-60 h-30" />
-                      <DoughnutChart :chartData="testData" class="w-60 h-30"/>
-                   </div>
-                   <div class="h-1/2 flex justify-evenly items-center ">
-                      <ScatterChart :chartData="testData" class="w-60 h-30 ml-12"/>
-                      <PolarAreaChart :chartData="testData" class="w-60 h-30 ml-12"/>
-                   </div>
-             </div>
-        </div>
+    <div class="flex justify-evenly">
+       <div class="bg-white px-4 py-2 w-52 rounded-lg border-slate-200 border-2 h-60 mt-12 shadow-md">
+         <div class="w-full h-[30%]  justify-center items-center flex">
+          <i class="fa-solid fa-xl mr-3 fa-boxes-stacked text-slate-500"></i> 
+            <h1 class="text-xl text-slate-500">Category</h1>
+         </div>
+         <div class="w-full h-[70%]  flex justify-center items-center pt-2">
+            <div class="w-20 h-20 rounded-full border-2 shadow-sm flex justify-center items-center  bg-cyan-400">
+                <div class="text-xl text-white">{{ this.data.category }}</div>
+            </div>
+         </div>
+       </div>
+
+       <div class="bg-white px-4 py-2 w-52 rounded-lg border-slate-200 border-2 h-60 mt-12 shadow-md">
+         <div class="w-full h-[30%]  justify-center items-center flex">
+          <i class="fa-solid fa-xl mr-3  fa-pen-nib text-slate-500"></i> 
+            <h1 class="text-xl text-slate-500">Author</h1>
+         </div>
+         <div class="w-full h-[70%]  flex justify-center items-center pt-2">
+            <div class="w-20 h-20 rounded-full border-2 shadow-sm flex justify-center items-center  bg-cyan-400">
+                <div class="text-xl text-white">{{ this.data.author }}</div>
+            </div>
+         </div>
+       </div>
+       <div class="bg-white px-4 py-2 w-52 rounded-lg border-slate-200 border-2 h-60 mt-12 shadow-md">
+         <div class="w-full h-[30%]  justify-center items-center flex">
+          <i class="fa-brands fa-xl mr-3 fa-product-hunt text-slate-500"></i> 
+            <h1 class="text-xl text-slate-500">Book</h1>
+         </div>
+         <div class="w-full h-[70%]  flex justify-center items-center pt-2">
+            <div class="w-20 h-20 rounded-full border-2 shadow-sm flex justify-center items-center  bg-cyan-400">
+                <div class="text-xl text-white">{{ this.data.book }}</div>
+            </div>
+         </div>
+       </div>
+
+       <div class="bg-white px-4 py-2 w-52 rounded-lg border-slate-200 border-2 h-60 mt-12 shadow-md">
+         <div class="w-full h-[30%]  justify-center items-center flex">
+          <i class="fa-solid fa-xl mr-3 fa-users text-slate-500"></i> 
+            <h1 class="text-xl text-slate-500">User</h1>
+         </div>
+         <div class="w-full h-[70%]  flex justify-center items-center pt-2">
+            <div class="w-20 h-20 rounded-full border-2 shadow-sm flex justify-center items-center  bg-cyan-400">
+                <div class="text-xl text-white">{{ this.data.user }}</div>
+            </div>
+         </div>
+       </div>
+
     </div>
   </template>
   
   <script lang="ts">
-  import { BarChart ,DoughnutChart,ScatterChart,PolarAreaChart} from 'vue-chart-3';
-  import { Chart, registerables } from "chart.js";
   import ApiServices from '../../../services/ApiServices';
   
-  Chart.register(...registerables);
  
   export default {
     data(){
       return {
         auth:false,
-        role: ''
+        role: '',
+        data : []
       }
     },
     mounted(){
           this.setAuthUser()
+          this.getData()
     },
-    name: 'Home',
-    components: { BarChart ,DoughnutChart,ScatterChart,PolarAreaChart},
     methods:{
+      getData(){
+        ApiServices.get('dashboard').then((res)=>{
+          this.data = res.data
+        }).catch(err=>console.log(err))
+      },
       setAuthUser (){
             ApiServices.get('user').then((res)=>{
               let roles = res.data.data.role
@@ -49,39 +86,6 @@
             }).catch((err)=>console.log(err))
              
         },
-    },
-   
-    setup() {
-      const testData = {
-        labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
-        datasets: [
-          {
-            data: [30, 40, 60, 70, 5],
-            backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
-          },
-        ],
-      };
-  
-      return { 
-        testData,
-        options: [
-        {
-          label: 'Profile',
-          key: 'profile',
-          icon: ''
-        },
-        {
-          label: 'Edit Profile',
-          key: 'editProfile',
-          icon: ''
-        },
-        {
-          label: 'Logout',
-          key: 'logout',
-          icon: ''
-        }
-      ]
-     };
     },
   };
   </script>

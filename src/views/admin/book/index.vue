@@ -1,11 +1,7 @@
 <template>
-    <div class="w-100 h-screen flex justify-center items-center" v-if="pageLoading">
-        <n-space>
-            <n-spin size="medium" />
-        </n-space>
-    </div>
+    
 
-    <div v-if="!pageLoading">
+    <div >
         <div class="flex" style="height: 500px;">
             <div class="w-8/12  h-full  border-r-2 border-slate-300">
 
@@ -59,12 +55,28 @@
                     </button>
                 </div>
 
-                <div class="relative overflow-x-auto border-b-2">
+                <div class=" h-12 px-10 py-2 flex justify-end border-b-2">
+                    <input type="text " v-model="filter" @keyup="setFilterData" class="border-slate-300 focus:outline-cyan-600 px-2 rounded-md border-2">
+                    <button @click="loadData" class="bg-cyan-400 rounded-full border-2 border-cyan-500 ml-2 w-8  h-8 px-2">
+                        <i class="fa-solid fa-magnifying-glass  text-cyan-800"></i>
+                    </button>
+                </div>
+
+                <div class="w-100 h-screen flex justify-center items-center" v-if="pageLoading">
+                    <n-space>
+                        <n-spin size="medium" />
+                    </n-space>
+                </div>
+
+                <div class="relative overflow-x-auto border-b-2" v-if="!pageLoading">
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-4 py-3">
                                     id
+                                </th>
+                                <th scope="col" class="px-1 py-3">
+                                    Image
                                 </th>
                                 <th scope="col" class="px-1 py-3">
                                     name
@@ -78,14 +90,9 @@
                                 <th scope="col" class="px-1 py-3">
                                     Author
                                 </th>
-                                <th scope="col" class="px-1 py-3">
-                                    Image
-                                </th>
+                              
                                 <th scope="col" class="px-1 py-3">
                                     Description
-                                </th>
-                                <th scope="col" class="px-1 py-3">
-                                    Book_Type
                                 </th>
                                 <th scope="col" class=" py-3">
                                     Action
@@ -101,6 +108,12 @@
                                     {{ row.id }}
                                 </th>
                                 <td class="px-2" @click="show(index)">
+                                    <n-image width="30" :src="path(row.image_id.image)"
+                                    :previewed-img-props="{ style: { border: '8px solid white' } }"
+                                    class="rounded-md "
+                                     />
+                                </td>
+                                <td class="px-2" @click="show(index)">
                                     {{ row.name }}
                                 </td>
                                 <td class="px-2" @click="show(index)">
@@ -112,18 +125,11 @@
                                 <td class="px-2" @click="show(index)">
                                     {{ row.author.name }}
                                 </td>
-                                <td class="px-2" @click="show(index)">
-                                    <n-image width="30" :src="path(row.image_id.image)"
-                                    :previewed-img-props="{ style: { border: '8px solid white' } }"
-                                    class="rounded-md "
-                                     />
-                                </td>
+                              
                                 <td class="px-2" @click="show(index)">
                                     {{ this.textshort(row.description)  }}
                                 </td>
-                                <td class="px-2" @click="show(index)">
-                                    {{ row.book_type }}
-                                </td>
+                               
                                 <td class="px-1 w-32 ">
                                     <button class="bg-slate-100 w-10 h-10 ml-2 rounded-md  hover:text-red-500"
                                         @click="remove(index)">
@@ -345,6 +351,7 @@ import ApiServices from '../../../../services/ApiServices';
 export default {
     data() {
         return {
+            filter : window.localStorage.getItem('filter_book'),
             colum:'',
             imageSrc : '../../../../booklogo.png',
             validationMessages:'',
@@ -389,6 +396,12 @@ export default {
         this.loadData(1);
     },
     methods: {
+        setFilterData(){
+            window.localStorage.setItem('filter_book',this.filter)
+            if (!window.localStorage.getItem('filter_book',this.filter)) {
+                this.loadData()
+            }
+        },
         textshort(text){
         return text.slice(0,12);
         },
@@ -440,9 +453,9 @@ export default {
             this.formData.file_id = this.rows[index].file_id 
             console.log(this.formData);
         },
-        loadData(params = '', url = 'books?page=') {
+        loadData(params = '', url = '?page=') {
             this.pageLoading = true
-            ApiServices.get(url + params).then(response => {
+            ApiServices.get('books/'+ window.localStorage.getItem('filter_book')  + url + params).then(response => {
                 this.rows = response.data.data.data;
                 this.total = response.data.data.total;
                 this.from = response.data.data.from;

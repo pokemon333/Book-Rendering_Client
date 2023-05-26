@@ -9,7 +9,7 @@
 
       <div class="flex w-full">
         <!-- Slide Bar -->
-        <div class=" h-screen sticky top-0  p-2 border-r-2 border-gray-300 w-60  flex flex-col justify-between text-gray-500">
+        <div class=" h-screen p-2 border-r-2 border-gray-300 w-60  flex flex-col justify-between text-gray-500" >
             <div class="flex justify-start text-cyan-700  items-center h-20 p-6">
                 <p class="text-4xl h-9 w-8 border-slate-300 border-r-2">B</p>
                 <p class="ml-2 text-cyan-400">Brighter</p>
@@ -28,8 +28,8 @@
             </div>
         </div>
         <!-- Main-Feed -->
-        <div class="w-full h-screen">
-            <div class="shadow-sm h-16 flex flex-wrap border-b-2   z-50">
+        <div class="w-full h-screen overflow-auto">
+            <div class="shadow-sm h-16 flex flex-wrap border-b-2  sticky top-0 bg-white  z-50">
                 <div class=" flex justify-center items-center  h-full w-10/12"> 
                     <!-- Future use -->
                 </div>
@@ -119,7 +119,7 @@ export default {
                 },
                 {
                     id: 5,
-                    name: "Products",
+                    name: "Book",
                     icon: "fa-brands fa-product-hunt fa-xl",
                     class: "active:bg-blue-700 focus:ring focus:ring-violet-700",
                     route: 'book'

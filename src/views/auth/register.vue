@@ -65,7 +65,7 @@ export default {
                 this.$router.push({name : 'client'});    
             })
             .catch(err=>{           
-                 console.log(err);
+                console.log(err);
                 let error = err.response.data.errors
                 this.validation.name = error.name ? error.name[0] : ''
                 this.validation.email = error.email ?error.email[0] :''

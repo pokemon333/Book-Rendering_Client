@@ -64,7 +64,7 @@
                  <div class="w-[10%]  h-full flex justify-start pl-8 text-cyan-800 items-center" v-if="this.drawer">
                 </div>
                 <div class="w-[45%]   h-full flex items-center  max-md:hidden  justify-end">
-                    <input v-model="searchData.filter"  type="text" class="w-[80%] max-sm:hidden px-4 bg-cyan-100 h-10 rounded-full text-cyan-700 focus:border-cyan-400  focus:outline-none  focus:border-2   border-[1px] border-cyan-300 mr-2">
+                    <input v-model="searchData.filter" @keyup="setFilter"  type="text" class="w-[80%] max-sm:hidden px-4 bg-cyan-100 h-10 rounded-full text-cyan-700 focus:border-cyan-400  focus:outline-none  focus:border-2   border-[1px] border-cyan-300 mr-2">
                     <button @click="search"  class="bg-cyan-100 h-10 w-12 rounded-full  max-sm:hidden border-[1px] text-cyan-700  border-cyan-300  ">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
@@ -130,20 +130,27 @@
                         <p class="mb-3 font-normal text-cyan-500 dark:text-gray-400">
                            Book-Type : {{ book.book_type }}
                         </p>
-                       <div class="flex justify-between pr-4">
-                            <button @click="showDescription(book.description)"  class="inline-flex cursor-pointer items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                 Description
-                            </button>
-                            <div v-for="role,index in this.authuser.role" :key="index">
-                                <button v-if="book.book_type == role.name" class="rounded-full max-lg:hidden h-10 w-10 bg-cyan-400 text-blue-900" >
-                                    <a :href="'http://localhost:8000/storage/pdf/'+book.file_id">
+                       <div class="flex justify-between pr-2">
+                           <div class=" w-2/3">
+                                <button @click="showDescription(book.description)"  class="inline-flex cursor-pointer items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    Description
+                                </button>
+                           </div>
+                            <div v-for="role,index in authuser.role" :key="index" >
+                              <div v-if="book.book_type == role.name" >
+                                <button class="rounded-full  max-lg:hidden h-10 w-10  bg-cyan-400 text-blue-900" >
+                                    <a  :href="'http://localhost:8000/storage/pdf/'+book.file_id">
                                         <i class="fa-solid fa-book-open"></i>
                                     </a>
                                 </button>
+                              </div>
+                             
                             </div>
-                             <button class="rounded-full h-10 lg:hidden w-10 bg-cyan-400 text-blue-900" @click="download(book.file_id)" >
-                                <i class="fa-solid fa-file-arrow-down"></i>
-                            </button>
+                            <div>
+                                <button class="rounded-full h-10 lg:hidden w-10 bg-cyan-400  text-blue-900" @click="download(book.file_id)" >
+                                    <i class="fa-solid fa-file-arrow-down"></i>
+                                </button>
+                            </div>
                        </div>
                     </div>
                 </div>             
@@ -189,11 +196,17 @@ export default {
                 author:''
             },
             searchData:{
-                filter : ''
+                filter : window.localStorage.getItem('filter_client')
             }
         }
     },
     methods:{
+        setFilter(){
+            window.localStorage.setItem('filter_client',this.searchData.filter)
+            if (!window.localStorage.getItem('filter_client')) {
+                this.search()
+            }
+        },
         logout(){
             ApiServices.post('user/logout').then((res)=>{
                 TokenServices.destroyToken();
